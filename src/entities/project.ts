@@ -7,7 +7,7 @@ import { Voice } from "../models/Voice.js";
 import * as s3 from "../utils/aws-client.js";
 import * as completion from "../utils/completion.js";
 import * as errors from "../utils/errors.js";
-import getConfigValues from "../utils/getConfigValues.js";
+import getConfigValues from "../utils/get-config-values.js";
 import * as speech from "../utils/speech.js";
 
 type CreateConfigParams = {
@@ -58,15 +58,15 @@ export const typeDefs = `#graphql
   }
 
   type Query {
-    projects: [Project] @authorization
-    project(id: String): Project @authorization
+    projects: [Project!]! @authorization
+    project(id: String): Project! @authorization
   }
 
   type Mutation {
-    createProject(topic: String!, config: CreateConfigParams!): Project @authorization
-    generateSpeech(projectId: String!, voiceId: String!): Project @authorization
-    updateProject(id: String!, params: UpdateParams!): Project @authorization
-    removeProject(id: String!): Boolean @authorization
+    createProject(topic: String!, config: CreateConfigParams!): Project! @authorization
+    generateSpeech(projectId: String, voiceId: String!): Project! @authorization
+    updateProject(id: String, params: UpdateParams!): Project! @authorization
+    removeProject(id: String): Boolean! @authorization
   }
 `;
 
@@ -190,10 +190,11 @@ export const resolvers = {
         await Project.updateOne({ _id: projectId }, { speech: result.id });
 
         // Return project
-        return await Project.findOne({ _id: projectId }).populate({
-          path: "speech",
-          populate: { path: "voice" },
-        });
+        return await Project.findOne({ _id: projectId })
+          .populate({ path: "config.hook" })
+          .populate({ path: "config.retention" })
+          .populate({ path: "config.callToAction" })
+          .populate({ path: "speech", populate: { path: "voice" } });
       } catch {
         throw errors.serverError();
       }
@@ -227,10 +228,11 @@ export const resolvers = {
           }
         );
 
-        return await Project.findOne({ _id: id }).populate({
-          path: "speech",
-          populate: { path: "voice" },
-        });
+        return await Project.findOne({ _id: id })
+          .populate({ path: "config.hook" })
+          .populate({ path: "config.retention" })
+          .populate({ path: "config.callToAction" })
+          .populate({ path: "speech", populate: { path: "voice" } });
       } catch {
         throw errors.serverError();
       }

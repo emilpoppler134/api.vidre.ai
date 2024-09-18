@@ -19,7 +19,7 @@ type CompleteParams = {
 //  - The string has at least one number.
 //  - The string is at least 6 characters long.
 //  - Only alphanumeric characters or #$@!%&*? special characters are allowed.
-const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z][A-Za-z\d#$@!%&*?]{7,}$/;
+const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z][A-Za-z\d#$@!%&*?]{5,}$/;
 
 export const typeDefs = `#graphql
   type AccessToken {
@@ -58,14 +58,13 @@ export const typeDefs = `#graphql
   }
 
   type Query {
-    me: User @authorization
+    me: User! @authorization
   }
 
   type Mutation {
-    login(username: String!, password: String!): AccessToken 
-    signup(username: String!): AccessToken
-    complete(params: CompleteParams!): Boolean @authorization
-    refreshAccessToken: AccessToken @authorization
+    login(username: String!, password: String): AccessToken!
+    complete(params: CompleteParams!): Boolean! @authorization
+    refreshAccessToken: AccessToken! @authorization
   }
 `;
 
@@ -76,48 +75,36 @@ export const resolvers = {
     },
   },
   Mutation: {
-    login: async (parent: undefined, { username, password }: { username: string; password: string }) => {
-      const password_hash = crypto.createHash("sha256").update(password).digest("hex");
-      const result = await User.findOne({ username, password_hash });
+    login: async (parent: undefined, { username, password }: { username: string; password?: string }) => {
+      let findUser = await User.findOne({ username });
 
-      if (result === null) {
-        throw new errors.UserInputError([
-          { key: "username", message: "Your username and/or password do not match" },
-          { key: "password", message: "Your username and/or password do not match" },
-        ]);
+      if (findUser !== null && findUser.type === UserType.DEFAULT) {
+        if (password === undefined) {
+          throw errors.preconditionRequired();
+        }
+
+        const password_hash = crypto.createHash("sha256").update(password).digest("hex");
+        if (findUser.password_hash !== password_hash) {
+          throw errors.invalidCredentials();
+        }
       }
 
-      const token = signToken({
-        id: result.id,
-        type: result.type,
-        username: result.username,
-        name: result.name,
-      });
+      try {
+        const result = findUser === null ? await User.create({ username }) : findUser;
 
-      const expires = getExpires(token);
+        const token = signToken({
+          id: result.id,
+          type: result.type,
+          username: result.username,
+          name: result.name,
+        });
 
-      return { expires, token };
-    },
+        const expires = getExpires(token);
 
-    signup: async (parent: undefined, { username }: { username: string }, context: Context) => {
-      const findUser = await User.findOne({ username });
-
-      if (findUser !== null && findUser.type !== UserType.GUEST) {
-        throw errors.userCreationEmailTaken();
+        return { expires, token };
+      } catch {
+        throw errors.serverError();
       }
-
-      const result = findUser === null ? await User.create({ username }) : findUser;
-
-      const token = signToken({
-        id: result.id,
-        type: result.type,
-        username: result.username,
-        name: result.name,
-      });
-
-      const expires = getExpires(token);
-
-      return { expires, token };
     },
     complete: async (parent: undefined, { params }: { params: CompleteParams }, context: Context) => {
       const result = await User.findOne({ _id: context.user?.id });

@@ -11,13 +11,13 @@ export const typeDefs = `#graphql
   }
 
   type ConfigurationItem {
-    id: String
+    id: String!
     value: String
     description: String
   }
 
   type Query {
-    configurations: ConfigurationAlternatives @authorization
+    configurations: ConfigurationAlternatives! @authorization
   }
 `;
 

@@ -34,6 +34,10 @@ const schema = new Schema<IVoice>({
       type: String,
       required: true,
     },
+    duration: {
+      type: Number,
+      required: true,
+    },
   },
   elevenlabs_id: {
     type: String,

@@ -7,10 +7,15 @@ export const typeDefs = `#graphql
     name: String
     description: String
     gradient: String
+    sample: Sample
+  }
+
+  type Sample {
+    duration: Float
   }
 
   type Query {
-    voices: [Voice] @authorization
+    voices: [Voice!]! @authorization
   }
 `;
 
