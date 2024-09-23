@@ -17,6 +17,7 @@ import * as Voice from "./entities/voice.js";
 import { makeExecutableSchema } from "@graphql-tools/schema";
 import mediaRoutes from "./routes/media.route.js";
 import { authorizationDirectiveTransformer } from "./utils/authorization-directive.js";
+import { json } from "./utils/json.js";
 
 export type Context = {
   user: authentication.UserInfo | null;
@@ -45,7 +46,7 @@ await connectToMongoDB();
 app.use(cors());
 app.use(
   "/graphql",
-  express.json(),
+  json,
   expressMiddleware(server, {
     context: async ({ req }): Promise<Context> => {
       await checkMongoDBConnection();
