@@ -10,6 +10,8 @@ export const serverError = () => new VidreError("Something went wrong", "SERVER_
 export const invalidParameters = (...params: Array<string>) =>
   new VidreError(`Invalid parameters: ${params.join(", ")}`, "BAD_REQUEST");
 
+export const authorizationGuestAccount = () =>
+  new VidreError("You need to complete your account to access this page.", "GUEST_ACCOUNT");
 export const authorizationAccessDenied = () => new VidreError("Access denied", "FORBIDDEN");
 export const authenticationExpiredToken = () => new VidreError("Expired token given", "UNAUTHENTICATED");
 export const authenticationInvalidScheme = () =>
@@ -26,3 +28,5 @@ export const userCompletionNotGuest = () =>
 
 export const projectNotFound = () => new VidreError("There is no project with that id", "NOT_FOUND");
 export const voiceNotFound = () => new VidreError("There is no voice with that id", "NOT_FOUND");
+
+export const speechOutOfTokens = () => new VidreError("You don't have enough tokens to proceed.", "OUT_OF_TOKENS");

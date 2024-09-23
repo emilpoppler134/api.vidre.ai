@@ -43,6 +43,7 @@ export const typeDefs = `#graphql
     familiarity: String
     purpose: String
     work: String
+    tokens: Int
 
     timestamp: Int
   }
@@ -123,7 +124,8 @@ export const resolvers = {
       if (params.name.trim() === "") invalidParameters.push("name");
       if (params.purpose.trim() === "") invalidParameters.push("purpose");
       if (params.familiarity.trim() === "") invalidParameters.push("familiarity");
-      if (params.work !== null && params.work.trim() === "") invalidParameters.push("work");
+      if (params.work !== null && params.work !== undefined && params.work.trim() === "")
+        invalidParameters.push("work");
       if (!params.password.match(passwordRegex)) invalidParameters.push("password");
 
       if (invalidParameters.length > 0) {
@@ -141,6 +143,7 @@ export const resolvers = {
           purpose: params.purpose,
           familiarity: params.familiarity,
           work: params.work,
+          tokens: 1500,
           password_hash: password_hash,
         };
 

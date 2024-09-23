@@ -16,6 +16,7 @@ type IUser = {
   familiarity: string | null;
   purpose: string | null;
   work: string | null;
+  tokens: number;
   timestamp: number;
 };
 
@@ -64,6 +65,11 @@ const schema = new Schema<IUser>({
     type: String,
     required: false,
     default: () => null,
+  },
+  tokens: {
+    type: Number,
+    required: false,
+    default: () => 0,
   },
   timestamp: {
     type: Number,

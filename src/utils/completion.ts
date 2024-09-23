@@ -37,20 +37,19 @@ const systemPrompt = `
 `;
 
 export async function create({ topic, hook, retention, callToAction }: CreateCompletionProps): Promise<string | null> {
-  return "Here are 3 quick facts about the Roman Empire: They had fast-food joints called thermopoliums, used urine for whitening clothes, and gladiators often lived to fight another day. Fascinating, right? Follow for more! Join us for more content like this!";
-  // const completion = await openai.chat.completions.create({
-  //   model: "gpt-4o",
-  //   messages: [
-  //     {
-  //       role: "system",
-  //       content: systemPrompt,
-  //     },
-  //     {
-  //       role: "user",
-  //       content: `Topic: ${topic}, Hook: ${hook}, Retention: ${retention}, Call to action: ${callToAction}`,
-  //     },
-  //   ],
-  // });
+  const completion = await openai.chat.completions.create({
+    model: "gpt-4o",
+    messages: [
+      {
+        role: "system",
+        content: systemPrompt,
+      },
+      {
+        role: "user",
+        content: `Topic: ${topic}, Hook: ${hook}, Retention: ${retention}, Call to action: ${callToAction}`,
+      },
+    ],
+  });
 
-  // return completion.choices[0].message.content;
+  return completion.choices[0].message.content;
 }

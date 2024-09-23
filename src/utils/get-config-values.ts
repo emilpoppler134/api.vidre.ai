@@ -29,5 +29,9 @@ export default async function getConfigValues(params: ConfigFields): Promise<Con
     configReturn.callToAction = result?.value ?? null;
   }
 
+  if (params.hook === "Let Our AI Decide") configReturn.hook = "Let Our AI Decide";
+  if (params.retention === "Let Our AI Decide") configReturn.retention = "Let Our AI Decide";
+  if (params.callToAction === "Let Our AI Decide") configReturn.callToAction = "Let Our AI Decide";
+
   return configReturn;
 }
