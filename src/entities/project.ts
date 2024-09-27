@@ -84,9 +84,6 @@ export const resolvers = {
       return result;
     },
     project: async (parent: undefined, { id }: { id: string }, context: Context) => {
-      if (context.user?.type === UserType.GUEST) {
-        throw errors.authorizationGuestAccount();
-      }
       if (!Types.ObjectId.isValid(id)) {
         throw errors.invalidParameters("id");
       }

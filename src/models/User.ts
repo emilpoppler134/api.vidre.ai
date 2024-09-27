@@ -11,11 +11,9 @@ type IUser = {
   username: string;
   password_hash: string | null;
   name: string | null;
-  age: number | null;
-  wishlist: boolean | null;
+  age: string | null;
   familiarity: string | null;
   purpose: string | null;
-  work: string | null;
   tokens: number;
   timestamp: number;
 };
@@ -42,12 +40,7 @@ const schema = new Schema<IUser>({
     default: () => null,
   },
   age: {
-    type: Number,
-    required: false,
-    default: () => null,
-  },
-  wishlist: {
-    type: Boolean,
+    type: String,
     required: false,
     default: () => null,
   },
@@ -57,11 +50,6 @@ const schema = new Schema<IUser>({
     default: () => null,
   },
   purpose: {
-    type: String,
-    required: false,
-    default: () => null,
-  },
-  work: {
     type: String,
     required: false,
     default: () => null,

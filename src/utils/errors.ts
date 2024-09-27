@@ -10,8 +10,7 @@ export const serverError = () => new VidreError("Something went wrong", "SERVER_
 export const invalidParameters = (...params: Array<string>) =>
   new VidreError(`Invalid parameters: ${params.join(", ")}`, "BAD_REQUEST");
 
-export const authorizationGuestAccount = () =>
-  new VidreError("You need to complete your account to access this page.", "GUEST_ACCOUNT");
+export const authorizationGuestAccount = () => new VidreError("You need to complete your account.", "GUEST_ACCOUNT");
 export const authorizationAccessDenied = () => new VidreError("Access denied", "FORBIDDEN");
 export const authenticationExpiredToken = () => new VidreError("Expired token given", "UNAUTHENTICATED");
 export const authenticationInvalidScheme = () =>
